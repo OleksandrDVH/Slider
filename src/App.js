@@ -1,4 +1,4 @@
-import {Component, useState, useEffect} from 'react';
+import {Component, useState, useEffect, useCallback} from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
 
@@ -57,23 +57,20 @@ import './App.css';
 
 
 
+
 const Slider = (props) => {
 
     const [slide, setSlide] = useState(0);
     const [autoplay, setAutoPlay] = useState(false);
 
-    function logging() {
-        console.log('log!');
-    }
-
-    useEffect(() => {
-        console.log('effect');
-        document.title = `Slide: ${slide}`;
+    const getSomeImages = useCallback(() => {
+        console.log('fetching')
+        return [
+            'https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8fA%3D%3D&w=1000&q=80',
+            'https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?cs=srgb&dl=pexels-pixabay-268533.jpg&fm=jpg'
+        ]
     }, [slide]);
 
-    useEffect(() => {
-        console.log('autoplay');
-    }, [autoplay]);
 
     function changeSlide(i) {
         setSlide(slide => slide + i);
@@ -87,7 +84,16 @@ const Slider = (props) => {
     return (
         <Container>
             <div className="slider w-50 m-auto">
-                <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" />
+                {/* {
+                    getSomeImages().map((url, i) => {
+                        return (
+                            <img key={i} className="d-block w-100" src={url} alt="slide" />
+                        )
+                    })
+                } */}
+
+                <Slide getSomeImages={getSomeImages}/>
+
                 <div className="text-center mt-5">Active slide {slide} <br/>
                 {autoplay ? 'auto' : null}
                 </div>
@@ -104,6 +110,19 @@ const Slider = (props) => {
                 </div>
             </div>
         </Container>
+    )
+}
+
+const Slide = ({getSomeImages}) => {
+    const [images, setImages] = useState([]);
+
+    useEffect(() => {
+        setImages(getSomeImages())
+    }, [getSomeImages])
+    return (
+        <>
+            {images.map((url, i) => <img key={i} className="d-block w-100" src={url} alt="slide" />)}
+        </>
     )
 }
 
