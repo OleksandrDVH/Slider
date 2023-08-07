@@ -1,4 +1,4 @@
-import {Component, useState, useEffect, useCallback} from 'react';
+import {Component, useState, useEffect, useCallback, useMemo} from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
 
@@ -56,7 +56,10 @@ import './App.css';
 // }
 
 
-
+const countTotal = (num) => {
+    console.log('counting...');
+    return num + 10;
+}
 
 const Slider = (props) => {
 
@@ -66,8 +69,8 @@ const Slider = (props) => {
     const getSomeImages = useCallback(() => {
         console.log('fetching')
         return [
-            'https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8fA%3D%3D&w=1000&q=80',
-            'https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?cs=srgb&dl=pexels-pixabay-268533.jpg&fm=jpg'
+            "https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8fA%3D%3D&w=1000&q=80",
+            "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?cs=srgb&dl=pexels-pixabay-268533.jpg&fm=jpg"
         ]
     }, [slide]);
 
@@ -80,22 +83,29 @@ const Slider = (props) => {
         setAutoPlay(autoplay => !autoplay)
     }
 
+    const total = useMemo(() => {
+        return countTotal(slide);
+    }, [slide]);
+
+    const style = useMemo(() => ({
+        color: slide > 4 ? 'red' : 'black'
+    }), [slide])
+
+    useEffect(() => {
+        console.log('styles!');
+    }, [style])
+
 
     return (
         <Container>
             <div className="slider w-50 m-auto">
-                {/* {
-                    getSomeImages().map((url, i) => {
-                        return (
-                            <img key={i} className="d-block w-100" src={url} alt="slide" />
-                        )
-                    })
-                } */}
 
                 <Slide getSomeImages={getSomeImages}/>
 
                 <div className="text-center mt-5">Active slide {slide} <br/>
                 {autoplay ? 'auto' : null}
+                </div>
+                <div style={style} className="text-center mt-5">Total slides: {total}
                 </div>
                 <div className="buttons mt-3">
                     <button 
